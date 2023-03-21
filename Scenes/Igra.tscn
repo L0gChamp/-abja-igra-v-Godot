@@ -1,0 +1,14 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://Scenes/Gumbi_za_poteze.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Scenes/Šahovnica.tscn" type="PackedScene" id=2]
+[ext_resource path="res://Scenes/Igra.gd" type="Script" id=3]
+
+[node name="Level" type="Node2D"]
+script = ExtResource( 3 )
+
+[node name="Šahovnica" parent="." instance=ExtResource( 2 )]
+position = Vector2( 50, 54 )
+
+[node name="Gumbi_za_poteze" parent="." instance=ExtResource( 1 )]
+position = Vector2( 642, 57 )

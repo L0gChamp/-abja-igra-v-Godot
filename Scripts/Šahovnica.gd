@@ -1,0 +1,264 @@
+extends Node2D
+
+var polje = preload("res://Scenes/Polje.tscn")
+
+var zabica = preload("res://Scenes/Zabica.tscn").instance()
+
+var tocka = preload("res://Scenes/Tocka.tscn")
+
+var muha_scene = preload("res://Scenes/muha.tscn")
+
+var tile_grid = []
+
+var mozne_poteze = []
+
+var pot_zabice = []
+
+var mozne_tocke = []
+
+var trenutna_poteza 
+
+var muhe_list = []
+
+var muhe = []
+
+var game_state = [] #Žabica_position #muhe #poteze #vrata
+
+func naredi_polje(n, k, zamik_n=0, zamik_k=0):
+	var polje = []
+	for i in range(zamik_n, n + 1):
+		for j in range(zamik_k, k + 1):
+			polje.append(Vector2(i, j))
+	return polje
+
+
+func ustvari_polje(x,y):
+	for i in range(0,x):
+		for j in range(0,y):
+			var p = polje.instance()
+			p.position = Vector2(i*64,j*64)
+			p.pos = Vector2(i,j)
+			
+			add_child(p)
+			tile_grid.append(Vector2(i,j))
+
+func nastavi_tocke(x,y):
+	for i in range(0,x):
+		for j in range(0,y):
+			var t = tocka.instance()
+			t.position = Vector2(i*64,j*64)
+			t.pos = Vector2(i,j)
+			add_child(t)
+			
+			mozne_tocke.append(t)
+			
+func nastavi_muhe(muhe_list):
+	for i in muhe_list:
+		var m = muha_scene.instance()
+		m.pos = Vector2(i[0] , i[1])
+		m.position = Vector2(i[0] * 64, i[1] *64)
+		add_child(m)
+		
+		muhe.append(m)
+			
+func _ready():
+	trenutna_poteza = get_parent().trenutna_poteza_igra
+	muhe_list = get_parent().muhe_igra
+	ustvari_polje(8,8)
+	nastavi_tocke(8,8)
+	nastavi_muhe(muhe_list)
+	add_child(zabica)
+	zabica.position = Vector2(64 , 64)
+	zabica.pos = Vector2(1,1)
+	pass
+
+
+func check_valid(pos):
+	if pos in mozne_poteze:
+		return true
+
+func attempt_move(pos):
+	if (check_valid(pos)):
+		var zacetek
+		var konec
+		var pot_zabice
+		zacetek = zabica.pos
+		zabica.pos = pos
+		zabica.position = pos * 64
+		konec = pos
+		pot_zabice = nastavi_pot(zacetek,konec,trenutna_poteza)
+		spremeni_premikanje(trenutna_poteza)
+		spremeni_vidljivost_sahovnica()
+		pojej_muhe(muhe,pot_zabice)
+		
+#TUKAJ
+#SO
+#POTEZE
+
+func lovska_poteza(tile_gridd, pos):
+	var mozno = []
+
+	for i in [1, -1]:
+		for j in [1, -1]:
+			var x = 1
+			while true:
+				var tile_pos = Vector2(pos[0] + x * i, pos[1] + x * j)
+				if tile_pos in tile_grid:
+					mozno.append(tile_pos)
+					x += 1
+				else:
+					break
+	return mozno
+
+var lovska_poteza_ref = funcref(self,"lovska_poteza")
+
+func trdnjavska_poteza(tile_gridd, pos):
+	var mozno = []
+
+	for i in [[0, 1], [0, -1], [1, 0], [-1, 0]]:
+		var x = 1
+		while true:
+			var tile_pos = Vector2(pos.x + i[0] * x, pos.y + i[1] * x)
+			if tile_pos in tile_grid:
+				mozno.append(tile_pos)
+				x += 1
+			else:
+				break
+	return mozno
+
+var trdnjavska_poteza_ref = funcref(self,"trdnjavska_poteza")
+
+func damina_poteza(tile_gridd, pos):
+	return trdnjavska_poteza(tile_gridd, pos) + lovska_poteza(tile_gridd, pos)
+
+var damina_poteza_ref = funcref(self, "damina_poteza")
+
+func konjska_poteza(tile_gridd, pos):
+	var mozno = []
+
+	for i in [-1, 1]:
+		for j in [-1, 1]:
+			for k in [1, 2]:
+				var tile_pos = Vector2(pos.x + i * k, pos.y + j * (3 - k))
+				if tile_pos in tile_grid:
+					mozno.append(tile_pos)
+	return mozno
+
+var konjska_poteza_ref = funcref(self, "konjska_poteza")
+
+func kraljeva_poteza(tile_gridd, pos):
+	var mozno = []
+	for i in range(-1,2):
+		for j in range(-1,2):
+			if (Vector2(pos.x + i,pos.y + j) in tile_grid) and !(i == 0 and j == 0):
+				mozno.append(Vector2(pos.x+i,pos.y+j))
+	return mozno
+	
+var kraljeva_poteza_ref = funcref(self, "kraljeva_poteza")
+
+func dash_poteza(tile_gridd, pos):
+	var mozno = []
+
+	for i in [[0, 1], [0, -1], [1, 0], [-1, 0]]:
+		var x = 1
+		while true:
+			var tile_pos = Vector2(pos.x + i[0] * x, pos.y + i[1] * x)
+			if tile_pos in tile_grid:
+				x += 1
+			else:
+				mozno.append(Vector2(pos.x + i[0] * (x-1), pos.y + i[1] * (x-1)))
+				break
+	return mozno
+
+var dash_poteza_ref = funcref(self, "dash_poteza")
+
+var slovar_funkcij_potez = {
+	"konj" : konjska_poteza_ref,
+	"trdnjava": trdnjavska_poteza_ref,
+	"dama": damina_poteza_ref,
+	"kralj": kraljeva_poteza_ref,
+	"lovec": lovska_poteza_ref,
+	"dash": dash_poteza_ref
+}
+
+#POTI
+
+func trdnjavska_pot(start, finish):
+	var skoraj
+	if start[0] < finish[0] or start[1] < finish[1]:
+		skoraj = naredi_polje(finish[0], finish[1], start[0], start[1])
+	else:
+		skoraj = naredi_polje(start[0], start[1], finish[0], finish[1])
+	if start in skoraj:
+		skoraj.remove(start)
+	return(skoraj)
+	
+var trdnjavska_pot_ref = funcref(self, "trdnjavska_pot")
+
+func lovska_pot(start, finish):
+	var pot = []
+	var a
+	var b
+	if finish[0] > start[0]:
+		a = 1
+	else:
+		a = -1
+	if finish[1] > start[1]:
+		b = 1
+	else:
+		b = -1
+	for i in range(0, abs(finish[0] - start[0]) + 1):
+		pot.append(Vector2(start.x + i * a, start.y + i * b))
+	return pot
+
+var lovska_pot_ref = funcref(self, "lovska_pot")
+
+func damina_pot(start, finish):
+	if finish[0] == start[0] or finish[1] == start[1]:
+		return trdnjavska_pot(start, finish)
+	else:
+		return lovska_pot(start, finish)
+
+var damina_pot_ref = funcref(self, "damina_pot")
+
+func konjska_pot(start, finish):
+	return [finish]
+
+var konjska_pot_ref = funcref(self, "konjska_pot")
+
+func kraljevska_pot(start, finish):
+	return [finish]
+
+var kraljevska_pot_ref = funcref(self, "kraljevska_pot")
+
+func dash_pot(start, finish):
+	return trdnjavska_pot(start, finish)
+	
+var dash_pot_ref = funcref(self, "dash_pot")
+
+
+
+var slovar_funkcij_poti = {
+	"konj": konjska_pot_ref,
+	"trdnjava": trdnjavska_pot_ref,
+	"dama": damina_pot_ref,
+	"kralj": kraljevska_pot_ref,
+	"lovec": lovska_pot_ref,
+	"dash": dash_pot_ref
+}
+
+func nastavi_pot(zacetek,konec,poteza):
+	return slovar_funkcij_poti[poteza].call_func(zacetek,konec)
+
+func spremeni_premikanje(vrednost):
+	mozne_poteze = slovar_funkcij_potez[vrednost].call_func(tile_grid,zabica.pos)
+	trenutna_poteza = vrednost
+
+func spremeni_vidljivost_sahovnica():
+	for i in mozne_tocke:
+		i.spremeni_vidljivost()
+
+func pojej_muhe(muhe,pot):
+	for i in muhe:
+		if i.pos in pot:
+			i.pojedena_muha(pot)
