@@ -4,9 +4,7 @@ var vrednost
 
 var text
 
-signal vidljivost_tock
-
-signal spremeni_potezo
+var stevilo
 
 func _ready():
 	$Gumb.text = text 

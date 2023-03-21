@@ -190,7 +190,7 @@ func trdnjavska_pot(start, finish):
 	else:
 		skoraj = naredi_polje(start[0], start[1], finish[0], finish[1])
 	if start in skoraj:
-		skoraj.remove(start)
+		skoraj.erase(start)
 	return(skoraj)
 	
 var trdnjavska_pot_ref = funcref(self, "trdnjavska_pot")
