@@ -1,0 +1,33 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://Scripts/Gumb_za_level_select.gd" type="Script" id=1]
+[ext_resource path="res://Font/COMIC.TTF" type="DynamicFontData" id=2]
+
+[sub_resource type="DynamicFont" id=1]
+size = 36
+font_data = ExtResource( 2 )
+
+[sub_resource type="DynamicFont" id=2]
+font_data = ExtResource( 2 )
+
+[node name="Button" type="Button"]
+margin_left = 16.0
+margin_top = 16.0
+margin_right = 112.0
+margin_bottom = 112.0
+custom_fonts/font = SubResource( 1 )
+text = "test"
+script = ExtResource( 1 )
+ker_level = "test"
+
+[node name="Label" type="Label" parent="."]
+margin_left = -48.0
+margin_top = 104.0
+margin_right = 144.0
+margin_bottom = 144.0
+custom_fonts/font = SubResource( 2 )
+text = "test"
+align = 1
+valign = 1
+
+[connection signal="button_up" from="." to="." method="_on_Button_button_up"]

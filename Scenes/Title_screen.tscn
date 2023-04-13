@@ -1,0 +1,42 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://Scripts/Title_screen.gd" type="Script" id=1]
+[ext_resource path="res://Slike/pond.jpg" type="Texture" id=2]
+[ext_resource path="res://Font/COMIC.TTF" type="DynamicFontData" id=3]
+
+[sub_resource type="DynamicFont" id=1]
+size = 100
+font_data = ExtResource( 3 )
+
+[sub_resource type="DynamicFont" id=2]
+size = 50
+font_data = ExtResource( 3 )
+
+[node name="Title screen" type="Node2D"]
+script = ExtResource( 1 )
+
+[node name="Ozadje" type="Sprite" parent="."]
+modulate = Color( 0.258824, 0.580392, 0.498039, 1 )
+position = Vector2( 512.5, 300 )
+scale = Vector2( 0.999023, 0.878477 )
+texture = ExtResource( 2 )
+
+[node name="Naslov" type="Label" parent="."]
+margin_left = 256.0
+margin_top = 64.0
+margin_right = 768.0
+margin_bottom = 224.0
+custom_fonts/font = SubResource( 1 )
+text = "Žabja igra"
+align = 1
+valign = 1
+
+[node name="Igraj" type="Button" parent="."]
+margin_left = 312.0
+margin_top = 320.0
+margin_right = 704.0
+margin_bottom = 448.0
+custom_fonts/font = SubResource( 2 )
+text = "Igraj"
+
+[connection signal="button_up" from="Igraj" to="." method="_on_Igraj_button_up"]

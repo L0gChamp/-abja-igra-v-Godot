@@ -8,6 +8,8 @@ var tocka = preload("res://Scenes/Tocka.tscn")
 
 var muha_scene = preload("res://Scenes/muha.tscn")
 
+var level_complete = preload("res://Scenes/Level_complet.tscn").instance()
+
 var tile_grid = []
 
 var mozne_poteze = []
@@ -16,13 +18,36 @@ var pot_zabice = []
 
 var mozne_tocke = []
 
-var trenutna_poteza 
+var trenutna_poteza
 
 var muhe_list = []
 
 var muhe = []
 
+var stevilo_potez 
+
+var poteze_sahovnica = []
+
+var vrata_odprta = true
+
 var game_state = [] #Žabica_position #muhe #poteze #vrata
+
+var complete = false
+
+var pomozna_tocka
+
+func update_game_state(frog_pos, muhe_list, poteze, vrata):
+	var novi_podatki = [frog_pos, muhe_list.duplicate(),poteze.duplicate(),vrata]
+	game_state.append(novi_podatki)
+	
+
+func reset_gamestate():
+	game_state = [game_state[0]]
+	
+	
+func povrni_game_state():
+	if len(game_state) >= 2:
+		game_state.erase(game_state[-1])
 
 func naredi_polje(n, k, zamik_n=0, zamik_k=0):
 	var polje = []
@@ -32,15 +57,15 @@ func naredi_polje(n, k, zamik_n=0, zamik_k=0):
 	return polje
 
 
-func ustvari_polje(x,y):
-	for i in range(0,x):
-		for j in range(0,y):
-			var p = polje.instance()
-			p.position = Vector2(i*64,j*64)
-			p.pos = Vector2(i,j)
+func ustvari_polje(list_polj):
+	for nekaj in list_polj:
+		var x = nekaj.x
+		var y = nekaj.y
+		var p = polje.instance()
+		p.position = Vector2(x*64,y*64)
+		p.pos = Vector2(x,y)
 			
-			add_child(p)
-			tile_grid.append(Vector2(i,j))
+		add_child(p)
 
 func nastavi_tocke(x,y):
 	for i in range(0,x):
@@ -52,6 +77,17 @@ func nastavi_tocke(x,y):
 			
 			mozne_tocke.append(t)
 			
+func nastavi_tocke_plus(list_polj):
+	for i in list_polj:
+		var x = i.x
+		var y = i.y
+		var t = tocka.instance()
+		t.position = Vector2(x,y)
+		t.pos = Vector2(x*64,y*64)
+		add_child(t)
+		mozne_tocke.append(t)
+
+			
 func nastavi_muhe(muhe_list):
 	for i in muhe_list:
 		var m = muha_scene.instance()
@@ -62,35 +98,74 @@ func nastavi_muhe(muhe_list):
 		muhe.append(m)
 			
 func _ready():
-	trenutna_poteza = get_parent().trenutna_poteza_igra
+	pass
+	
+func _zacni():
+	tile_grid = get_parent().polje_igra
 	muhe_list = get_parent().muhe_igra
-	ustvari_polje(8,8)
-	nastavi_tocke(8,8)
+	stevilo_potez = get_parent().stevilo_potez_igra
+	poteze_sahovnica = get_parent().vrste_potez
+	ustvari_polje(tile_grid)
+	nastavi_tocke(10,8)
 	nastavi_muhe(muhe_list)
 	add_child(zabica)
-	zabica.position = Vector2(64 , 64)
-	zabica.pos = Vector2(1,1)
-	pass
+#	level_complete.hide()
+#	add_child(level_complete)
+	
+	zabica.pos = get_parent().zabica_pos_igra
+	zabica.position = zabica.pos * 64
+	
+	update_game_state(zabica.pos, muhe_list, stevilo_potez, vrata_odprta)
 
+func preveri_stevilo_potez():
+	if trenutna_poteza != null:
+		if stevilo_potez[trenutna_poteza] > 0:
+			return true
 
 func check_valid(pos):
-	if pos in mozne_poteze:
-		return true
+	if preveri_stevilo_potez():
+			if pos in mozne_poteze:
+				return true
+
+var test = 0
 
 func attempt_move(pos):
 	if (check_valid(pos)):
-		var zacetek
-		var konec
-		var pot_zabice
-		zacetek = zabica.pos
+		var zacetek = zabica.pos
 		zabica.pos = pos
 		zabica.position = pos * 64
-		konec = pos
-		pot_zabice = nastavi_pot(zacetek,konec,trenutna_poteza)
+		var konec = pos
+		var pot_zabice = nastavi_pot(zacetek,konec,trenutna_poteza)
 		spremeni_premikanje(trenutna_poteza)
-		spremeni_vidljivost_sahovnica()
+		stevilo_potez[trenutna_poteza] -= 1
+		if preveri_stevilo_potez():
+			spremeni_vidljivost_sahovnica()
+		else:
+			skrij_vidljivost_sahovnica()
+		pojej_muhe_list(pot_zabice)
 		pojej_muhe(muhe,pot_zabice)
 		
+		update_game_state(zabica.pos, muhe_list, stevilo_potez, vrata_odprta)
+		get_parent().update_stevilo_potez(stevilo_potez)
+		if len(muhe_list) == 0:
+			complete = true
+			level_complete.position = zabica.position + Vector2(0,100)
+			level_complete.show()
+		test += 1
+		
+func skrij_vidljivost_sahovnica():
+	for i in mozne_tocke:
+		i.hide()
+
+			
+func pojej_muhe_list(pot):
+	var pomozni_list = []
+	for i in muhe_list:
+		if i in pot:
+			pomozni_list.append(i)
+	for j in pomozni_list:
+		muhe_list.erase(j)
+			
 #TUKAJ
 #SO
 #POTEZE
@@ -166,7 +241,8 @@ func dash_poteza(tile_gridd, pos):
 			if tile_pos in tile_grid:
 				x += 1
 			else:
-				mozno.append(Vector2(pos.x + i[0] * (x-1), pos.y + i[1] * (x-1)))
+				if Vector2(pos.x + i[0] * (x-1), pos.y + i[1] * (x-1)) != pos:
+					mozno.append(Vector2(pos.x + i[0] * (x-1), pos.y + i[1] * (x-1)))
 				break
 	return mozno
 
@@ -255,10 +331,40 @@ func spremeni_premikanje(vrednost):
 	trenutna_poteza = vrednost
 
 func spremeni_vidljivost_sahovnica():
-	for i in mozne_tocke:
-		i.spremeni_vidljivost()
-
+	if preveri_stevilo_potez():
+		for i in mozne_tocke:
+			i.spremeni_vidljivost()
+	else:
+		skrij_vidljivost_sahovnica()
+		
 func pojej_muhe(muhe,pot):
 	for i in muhe:
 		if i.pos in pot:
 			i.pojedena_muha(pot)
+
+func update_board():
+	zabica.pos = array_last(game_state)[0]
+	zabica.position = zabica.pos * 64
+	muhe_list = array_last(game_state)[1].duplicate()
+	for i in muhe:
+		if i.pos in muhe_list:
+			i.show()	
+	stevilo_potez = array_last(game_state)[2].duplicate()
+	get_parent().update_stevilo_potez(stevilo_potez)
+	vrata_odprta = array_last(game_state)[3]
+	
+func _input(ev):
+	if ev is InputEventKey and ev.scancode == KEY_R and ev.pressed and not ev.echo:
+		reset_gamestate()
+		update_board()
+		spremeni_vidljivost_sahovnica()
+		trenutna_poteza = null
+		skrij_vidljivost_sahovnica()
+	if ev is InputEventKey and ev.scancode == KEY_E and ev.pressed and not ev.echo:
+		povrni_game_state()
+		update_board()
+		spremeni_premikanje(trenutna_poteza)
+		spremeni_vidljivost_sahovnica()
+		
+func array_last(array):
+	return array[array.size()-1]

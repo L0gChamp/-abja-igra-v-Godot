@@ -2,32 +2,49 @@ extends Node2D
 
 var singularni_gumb = preload("res://Scenes/Singularni_gumb.tscn")
 
-var stevec = preload("res://Scenes/poteza_števec.tscn")
+var stevec = preload("res://Scenes/stevec_potez.tscn")
 
 var poteze = []
 
-var stevilo_potez = []
+var stevilo_potez_gumbi
 
+var vsi_stevci = []
+
+func update_stevilo_potez_gumbi(stevilo_potez):
+	stevilo_potez_gumbi = stevilo_potez
+	stevilo_potez_gumbi.duplicate()
+	spremeni_stevce()
+	
+	
 func _ready():
+	pass
+	
+func _zacni():
 	poteze = get_parent().vrste_potez
-	stevilo_potez = get_parent().stevilo_potez
-
+	stevilo_potez_gumbi = get_parent().stevilo_potez_igra
 	var y = 0
 	for i in poteze:
 		var s = singularni_gumb.instance()
 		s.position = Vector2(0,y*64)
 		s.vrednost = i
-		s.text = i
-		s.stevilo = stevilo_potez[y]
+		s.text = i 
 		add_child(s)
 		
-		var stev = stevec.instance()
-		stev.position = Vector2(196,y*64)
-		stev.vrednost = stevilo_potez[y]
-		stev.text = stevilo_potez[y]
-		add_child(stev)
+	
+		var ste = stevec.instance()
+		ste.position = Vector2(196,y*64)
+		ste.text = stevilo_potez_gumbi[s.vrednost]
+		ste.vrednost = s.vrednost
+		add_child(ste)
+		vsi_stevci.append(ste)
 		
 		y += 1
+		
+	
+func spremeni_stevce():
+	for i in vsi_stevci:
+		i.text = stevilo_potez_gumbi[i.vrednost]
+		i.update_stevec()
 
 func spremeni_potezo_gumbi(vrednost):
 	get_parent().spremeni_potezo_igra(vrednost)

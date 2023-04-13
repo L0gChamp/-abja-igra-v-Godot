@@ -7,3 +7,6 @@ func _ready():
 
 func pojedena_muha(pot):
 	hide()
+
+func pokazi():
+	show()

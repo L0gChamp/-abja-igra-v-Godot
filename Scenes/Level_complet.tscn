@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://Slike/level complet.png" type="Texture" id=1]
+
+[node name="Level_complet" type="Node2D"]
+
+[node name="Sprite" type="Sprite" parent="."]
+position = Vector2( 0, 3.8147e-06 )
+scale = Vector2( 0.510724, 0.320449 )
+z_index = 69
+texture = ExtResource( 1 )

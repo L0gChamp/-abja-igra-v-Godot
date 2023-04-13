@@ -11,6 +11,7 @@ func _ready():
 		hide()
 	pass
 
+
 func spremeni_vidljivost():
 	mozne_poteze = get_parent().mozne_poteze
 	if pos in mozne_poteze:
@@ -18,3 +19,4 @@ func spremeni_vidljivost():
 	else:
 		hide()
 
+#TO DO: pogleda ali trenutna poteza = 0
