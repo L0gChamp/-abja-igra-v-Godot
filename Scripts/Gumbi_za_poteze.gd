@@ -10,6 +10,10 @@ var stevilo_potez_gumbi
 
 var vsi_stevci = []
 
+var pomozna_tocka
+
+var level_complete = preload("res://Scenes/level_complete.tscn")
+
 func update_stevilo_potez_gumbi(stevilo_potez):
 	stevilo_potez_gumbi = stevilo_potez
 	stevilo_potez_gumbi.duplicate()
@@ -39,7 +43,8 @@ func _zacni():
 		vsi_stevci.append(ste)
 		
 		y += 1
-		
+	
+	pomozna_tocka = Vector2(0, y * 64)
 	
 func spremeni_stevce():
 	for i in vsi_stevci:
@@ -51,3 +56,9 @@ func spremeni_potezo_gumbi(vrednost):
 
 func spremeni_vidljivost_gumbi():
 	get_parent().spremeni_vidljivost_igra()
+	
+func level_complet():
+	var lc = level_complete.instance()
+	lc.position = pomozna_tocka
+	add_child(lc)
+

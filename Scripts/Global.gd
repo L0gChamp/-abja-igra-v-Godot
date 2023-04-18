@@ -134,3 +134,18 @@ var slovar_levelov = {
 	"amogus" : amogus,
 	"mk" : mk
 }
+
+var narejeni_leveli = {
+	"test" : false,
+	"4_dame" : false,
+	"6_dam" : false,
+	"knights_tour_polovicni" : false,
+	"zacetni_level" : false,
+	"diamant" : false,
+	"unknown" : false,
+	"another_brick" : false,
+	"israel" : false,
+	"noble_knights" : false,
+	"amogus" : false,
+	"mk" : false
+}

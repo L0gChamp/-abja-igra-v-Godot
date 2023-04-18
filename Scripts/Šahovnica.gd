@@ -148,9 +148,7 @@ func attempt_move(pos):
 		update_game_state(zabica.pos, muhe_list, stevilo_potez, vrata_odprta)
 		get_parent().update_stevilo_potez(stevilo_potez)
 		if len(muhe_list) == 0:
-			complete = true
-			level_complete.position = zabica.position + Vector2(0,100)
-			level_complete.show()
+			get_parent().level_complete()
 		test += 1
 		
 func skrij_vidljivost_sahovnica():
@@ -361,10 +359,11 @@ func _input(ev):
 		trenutna_poteza = null
 		skrij_vidljivost_sahovnica()
 	if ev is InputEventKey and ev.scancode == KEY_E and ev.pressed and not ev.echo:
-		povrni_game_state()
-		update_board()
-		spremeni_premikanje(trenutna_poteza)
-		spremeni_vidljivost_sahovnica()
+		if len(game_state) != 1:
+			povrni_game_state()
+			update_board()
+			spremeni_premikanje(trenutna_poteza)
+			spremeni_vidljivost_sahovnica()
 		
 func array_last(array):
 	return array[array.size()-1]

@@ -43,7 +43,7 @@ margin_right = 344.0
 margin_bottom = 320.0
 text = "2"
 ker_level = "zacetni_level"
-ime_gumba = "Začetek"
+ime_gumba = "Zacetek"
 
 [node name="4_dame" parent="." instance=ExtResource( 2 )]
 margin_left = 536.0

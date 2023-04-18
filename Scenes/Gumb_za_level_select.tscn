@@ -22,9 +22,9 @@ ker_level = "test"
 
 [node name="Label" type="Label" parent="."]
 margin_left = -48.0
-margin_top = 104.0
+margin_top = 88.0
 margin_right = 144.0
-margin_bottom = 144.0
+margin_bottom = 160.0
 custom_fonts/font = SubResource( 2 )
 text = "test"
 align = 1
