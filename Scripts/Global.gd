@@ -15,8 +15,8 @@ var trenutna_igra : Dictionary
 #template#
 
 #var level = {
-#	"polje" :     ,
-#	"zabica" :     ,
+#	"polje" :        ,
+#	"zabica" :      ,
 #	"muhe" :     ,
 #	"vrste_potez" :     ,
 #	"stevilo_potez" : 
@@ -55,6 +55,15 @@ var knights_tour_polovicni = {
 	"vrste_potez" : ["konj"],
 	"stevilo_potez" : {"konj" : 15}
 }
+
+var knights_tour = {
+	"polje" : naredi_polje(7,3,0,0),
+	"zabica" : Vector2(0,3),
+	"muhe" : naredi_polje(7,3,1,0) + naredi_polje(0,2,0,0),
+	"vrste_potez" : ["konj"],
+	"stevilo_potez" : {"konj" : 31}
+}
+
 
 var zacetni_level = {
 	"polje" : naredi_polje(4,2,0,0) + naredi_polje(6,5,2,3),
@@ -105,9 +114,9 @@ var noble_knights = {
 }
 
 var amogus= {
-	"polje" : naredi_polje(2,2) + naredi_polje(3,2,3,1) + [Vector2(0,3),Vector2(2,3)]    ,
-	"zabica" : Vector2(1,1)    ,
-	"muhe" : naredi_polje(0,3,0,0) + naredi_polje(2,3,2,0) + naredi_polje(3,2,3,1) + [Vector2(1,0),Vector2(1,2)]  ,
+	"polje" : naredi_polje(1,4,1,1) + naredi_polje(3,4,3,1) + naredi_polje(4,3,2,2) + [Vector2(2,1),Vector2(2,3)]    ,
+	"zabica" : Vector2(2,2)    ,
+	"muhe" : naredi_polje(1,4,1,1) + naredi_polje(3,4,3,1) + naredi_polje(4,3,4,2) + [Vector2(2,1),Vector2(2,3)]  ,
 	"vrste_potez" : ["konj","trdnjava","kralj"]    ,
 	"stevilo_potez" : {"konj" : 4, "trdnjava" : 2, "kralj" : 2}
 }
@@ -118,6 +127,46 @@ var mk = {
 	"muhe" : naredi_polje(0,3,0,0) + naredi_polje(4,4,4,0) + naredi_polje(6,4,6,0) + [Vector2(1,1),Vector2(2,2),Vector2(3,1),Vector2(9,0),Vector2(8,1),Vector2(7,2),Vector2(8,3),Vector2(9,4)]   ,
 	"vrste_potez" : ["dama", "kralj"]     ,
 	"stevilo_potez" : {"dama" : 8, "kralj" : 1}
+}
+
+var hammer = {
+	"polje" : naredi_polje(2,3,0,1) + naredi_polje(5,4,3,0)       ,
+	"zabica" : Vector2(1,2)      ,
+	"muhe" : naredi_polje(0,3,0,1) + naredi_polje(2,3,2,1) + [Vector2(1,1),Vector2(1,3)] + naredi_polje(5,4,3,0)    ,
+	"vrste_potez" : ["trdnjava"]    ,
+	"stevilo_potez" : {"trdnjava" : 9} 
+}
+
+var kitajski_zid = {
+	"polje" : naredi_polje(2,7,0,0) + naredi_polje(4,0,3,0) + naredi_polje(7,7,5,0)       ,
+	"zabica" : Vector2(1,6)     ,
+	"muhe" : [Vector2(6,7)]    ,
+	"vrste_potez" : ["konj","dama"]    ,
+	"stevilo_potez" : {"konj":5, "dama":1}
+}
+
+var zanimivo = {
+	"polje" : naredi_polje(6,4,0,0)       ,
+	"zabica" : Vector2(1,2)      ,
+	"muhe" : [Vector2(1,2),Vector2(5,2)]    ,
+	"vrste_potez" : ["trdnjava" , "konj" , "lovec"]     ,
+	"stevilo_potez" : {"trdnjava" : 1, "konj": 1 , "lovec" : 1  }
+}
+
+var imposter= {
+	"polje" : naredi_polje(5,5)    ,
+	"zabica" : Vector2(2,2)    ,
+	"muhe" : naredi_polje(1,4,1,1) + naredi_polje(3,4,3,1) + naredi_polje(4,3,4,2) + [Vector2(2,1),Vector2(2,3)]  ,
+	"vrste_potez" : ["konj","trdnjava","kralj"]    ,
+	"stevilo_potez" : {"konj" : 5, "trdnjava" : 2, "kralj" : 1}
+}
+
+var spiral = {
+	"polje" : naredi_polje(6,6,6,0) + naredi_polje(5,6,0,6) + naredi_polje(0,5,0,0) + naredi_polje(4,0,1,0) + naredi_polje(4,4,4,1) + naredi_polje(3,4,2,4) + naredi_polje(2,3,2,2)      ,
+	"zabica" : Vector2(6,0)      ,
+	"muhe" : naredi_polje(6,6,6,1) + naredi_polje(5,6,0,6) + naredi_polje(0,5,0,0) + naredi_polje(4,0,1,0) + naredi_polje(4,4,4,1) + naredi_polje(3,4,2,4) + naredi_polje(2,3,2,2)    ,
+	"vrste_potez" : ["trdnjava","konj"]    ,
+	"stevilo_potez" : {"trdnjava" : 6 ,"konj" : 3 }
 }
 
 var slovar_levelov = {
@@ -132,7 +181,13 @@ var slovar_levelov = {
 	"israel" : israel,
 	"noble_knights" : noble_knights,
 	"amogus" : amogus,
-	"mk" : mk
+	"mk" : mk,
+	"hammer" : hammer,
+	"imposter" : imposter,
+	"kitajski_zid" : kitajski_zid,
+	"zanimivo" : zanimivo,
+	"spiral" : spiral,
+	"knights_tour" : knights_tour
 }
 
 var narejeni_leveli = {
@@ -147,5 +202,11 @@ var narejeni_leveli = {
 	"israel" : false,
 	"noble_knights" : false,
 	"amogus" : false,
-	"mk" : false
+	"mk" : false,
+	"hammer" : false,
+	"imposter" : false,
+	"kitajski_zid" : false,
+	"zanimivo" : false,
+	"spiral" : false,
+	"knights_tour" : false
 }

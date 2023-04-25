@@ -281,7 +281,7 @@ func lovska_pot(start, finish):
 		b = 1
 	else:
 		b = -1
-	for i in range(0, abs(finish[0] - start[0]) + 1):
+	for i in range(1, abs(finish[0] - start[0]) + 1):
 		pot.append(Vector2(start.x + i * a, start.y + i * b))
 	return pot
 
