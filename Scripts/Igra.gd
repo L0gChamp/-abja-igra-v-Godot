@@ -49,3 +49,9 @@ func _on_Button_button_up():
 func level_complete():
 	Global.narejeni_leveli[ker_level] = true
 	$Gumbi_za_poteze.level_complet()
+
+func undo():
+	$"Šahovnica".undo()
+	
+func restart():
+	$"Šahovnica".restart()

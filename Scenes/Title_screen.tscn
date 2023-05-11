@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://Scripts/Title_screen.gd" type="Script" id=1]
 [ext_resource path="res://Slike/pond.jpg" type="Texture" id=2]
@@ -10,6 +10,13 @@ font_data = ExtResource( 3 )
 
 [sub_resource type="DynamicFont" id=2]
 size = 50
+font_data = ExtResource( 3 )
+
+[sub_resource type="DynamicFont" id=3]
+size = 20
+font_data = ExtResource( 3 )
+
+[sub_resource type="DynamicFont" id=4]
 font_data = ExtResource( 3 )
 
 [node name="Title screen" type="Node2D"]
@@ -33,10 +40,28 @@ valign = 1
 
 [node name="Igraj" type="Button" parent="."]
 margin_left = 312.0
-margin_top = 320.0
+margin_top = 256.0
 margin_right = 704.0
-margin_bottom = 448.0
+margin_bottom = 384.0
 custom_fonts/font = SubResource( 2 )
 text = "Igraj"
 
+[node name="Pravila igre" type="Button" parent="."]
+margin_left = 344.0
+margin_top = 416.0
+margin_right = 672.0
+margin_bottom = 480.0
+custom_fonts/font = SubResource( 3 )
+text = "Pravila igre"
+
+[node name="O_projektu" type="Button" parent="."]
+margin_left = 344.0
+margin_top = 504.0
+margin_right = 672.0
+margin_bottom = 568.0
+custom_fonts/font = SubResource( 4 )
+text = "O projektu"
+
 [connection signal="button_up" from="Igraj" to="." method="_on_Igraj_button_up"]
+[connection signal="button_up" from="Pravila igre" to="." method="_on_Pravila_igre_button_up"]
+[connection signal="button_up" from="O_projektu" to="." method="_on_O_projektu_button_up"]

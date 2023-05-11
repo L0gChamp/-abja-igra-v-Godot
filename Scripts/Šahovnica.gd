@@ -353,17 +353,23 @@ func update_board():
 	
 func _input(ev):
 	if ev is InputEventKey and ev.scancode == KEY_R and ev.pressed and not ev.echo:
-		reset_gamestate()
-		update_board()
-		spremeni_vidljivost_sahovnica()
-		trenutna_poteza = null
-		skrij_vidljivost_sahovnica()
+		restart()
 	if ev is InputEventKey and ev.scancode == KEY_E and ev.pressed and not ev.echo:
-		if len(game_state) != 1:
+		undo()
+		
+func array_last(array):
+	return array[array.size()-1]
+
+func undo():
+	if len(game_state) != 1:
 			povrni_game_state()
 			update_board()
 			spremeni_premikanje(trenutna_poteza)
 			spremeni_vidljivost_sahovnica()
-		
-func array_last(array):
-	return array[array.size()-1]
+			
+func restart():
+	reset_gamestate()
+	update_board()
+	spremeni_vidljivost_sahovnica()
+	trenutna_poteza = null
+	skrij_vidljivost_sahovnica()
